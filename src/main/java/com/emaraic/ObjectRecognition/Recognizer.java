@@ -40,7 +40,6 @@ import org.tensorflow.Tensor;
  */
 public class Recognizer extends JFrame implements ActionListener {
 
-    private static final long serialVersionUID = 8294460932910554558L;
 
     private Table table;
     private JButton predict;
