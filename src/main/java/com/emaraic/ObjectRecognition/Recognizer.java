@@ -31,8 +31,12 @@ import org.tensorflow.Tensor;
 
 /**
  *
- * @author Taha Emara Website: http://www.emaraic.com Email : taha@emaraic.com
+ * @author Taha Emara 
+ * Website: http://www.emaraic.com 
+ * Email : taha@emaraic.com
  * Created on: Apr 29, 2017
+ * Kindly: Don't remove this header
+ * Download the pre-trained inception model from here: https://storage.googleapis.com/download.tensorflow.org/models/inception5h.zip
  */
 public class Recognizer extends JFrame implements ActionListener {
 
