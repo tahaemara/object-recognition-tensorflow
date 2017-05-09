@@ -36,7 +36,7 @@ import org.tensorflow.Tensor;
  * Email : taha@emaraic.com
  * Created on: Apr 29, 2017
  * Kindly: Don't remove this header
- * Download the pre-trained inception model from here: https://storage.googleapis.com/download.tensorflow.org/models/inception5h.zip
+ * Download the pre-trained inception model from here: https://storage.googleapis.com/download.tensorflow.org/models/inception_dec_2015.zip 
  */
 public class Recognizer extends JFrame implements ActionListener {
 
@@ -149,7 +149,7 @@ public class Recognizer extends JFrame implements ActionListener {
         } else if (e.getSource() == predict) {
             byte[] imageBytes = readAllBytesOrExit(Paths.get(imagepath));
 
-            try (Tensor image = constructAndExecuteGraphToNormalizeImage(imageBytes)) {
+            try (Tensor image = Tensor.create(imageBytes)) {
                 float[] labelProbabilities = executeInceptionGraph(graphDef, image);
                 int bestLabelIdx = maxIndex(labelProbabilities);
                 result.setText("");
@@ -166,45 +166,11 @@ public class Recognizer extends JFrame implements ActionListener {
     }
 
     ///
-    private static Tensor constructAndExecuteGraphToNormalizeImage(byte[] imageBytes) {
-        try (Graph g = new Graph()) {
-            GraphBuilder b = new GraphBuilder(g);
-            // Some constants specific to the pre-trained model at:
-            // https://storage.googleapis.com/download.tensorflow.org/models/inception5h.zip
-            //
-            // - The model was trained with images scaled to 224x224 pixels.
-            // - The colors, represented as R, G, B in 1-byte each were converted to
-            //   float using (value - Mean)/Scale.
-            final int H = 224;
-            final int W = 224;
-            final float mean = 117f;
-            final float scale = 1f;
-
-            // Since the graph is being constructed once per execution here, we can use a constant for the
-            // input image. If the graph were to be re-used for multiple input images, a placeholder would
-            // have been more appropriate.
-            final Output input = b.constant("input", imageBytes);
-            final Output output
-                    = b.div(
-                            b.sub(
-                                    b.resizeBilinear(
-                                            b.expandDims(
-                                                    b.cast(b.decodeJpeg(input, 3), DataType.FLOAT),
-                                                    b.constant("make_batch", 0)),
-                                            b.constant("size", new int[]{H, W})),
-                                    b.constant("mean", mean)),
-                            b.constant("scale", scale));
-            try (Session s = new Session(g)) {
-                return s.runner().fetch(output.op().name()).run().get(0);
-            }
-        }
-    }
-
     private static float[] executeInceptionGraph(byte[] graphDef, Tensor image) {
         try (Graph g = new Graph()) {
             g.importGraphDef(graphDef);
             try (Session s = new Session(g);
-                    Tensor result = s.runner().feed("input", image).fetch("output").run().get(0)) {
+                    Tensor result = s.runner().feed("DecodeJpeg/contents", image).fetch("softmax").run().get(0)) {
                 final long[] rshape = result.shape();
                 if (result.numDimensions() != 2 || rshape[0] != 1) {
                     throw new RuntimeException(
