@@ -51,7 +51,8 @@ public class Recognizer extends JFrame implements ActionListener {
     private JTextField modelpth;
     private FileNameExtensionFilter imgfilter = new FileNameExtensionFilter(
             "JPG & JPEG Images", "jpg", "jpeg");
-    private File fileInception;
+    private String pathToInception;
+    private File absolutePath;
     private String modelpath;
     private String imagepath;
     private boolean modelselected = false;
@@ -62,8 +63,10 @@ public class Recognizer extends JFrame implements ActionListener {
         setTitle("Object Recognition - Emaraic.com");
         setSize(500, 500);
         table = new Table();
-
-        fileInception = new File("E:/Facultate/IP/Proiect Image/object-recognition-tensorflow/inception_dec_2015");
+        File newfile = new File("../");
+        System.out.println(newfile);
+        pathToInception = new File("inception_dec_2015").getAbsolutePath();
+        absolutePath =  new File(pathToInception);
         predict = new JButton("Predict");
         predict.setEnabled(false);
         img = new JButton("Choose Image");
@@ -107,10 +110,9 @@ public class Recognizer extends JFrame implements ActionListener {
 
         if (e.getSource() == img) {
 
-            if (fileInception != null) {
-                File file = fileInception;
+            if (absolutePath != null) {
+                File file = absolutePath;
                 modelpath = file.getAbsolutePath();
-
                 modelpth.setText(modelpath);
                 System.out.println("Opening: " + file.getAbsolutePath());
                 modelselected = true;
