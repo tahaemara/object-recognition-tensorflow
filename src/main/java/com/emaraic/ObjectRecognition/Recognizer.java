@@ -43,9 +43,7 @@ public class Recognizer extends JFrame implements ActionListener {
 
     private Table table;
     private JButton predict;
-    private JButton incep;
     private JButton img;
-    private JFileChooser incepch;
     private JFileChooser imgch;
     private JLabel viewer;
     private JTextField result;
@@ -68,17 +66,13 @@ public class Recognizer extends JFrame implements ActionListener {
         fileInception = new File("E:/Facultate/IP/Proiect Image/object-recognition-tensorflow/inception_dec_2015");
         predict = new JButton("Predict");
         predict.setEnabled(false);
-        incep = new JButton("Choose Inception");
         img = new JButton("Choose Image");
-        incep.addActionListener(this);
         img.addActionListener(this);
         predict.addActionListener(this);
-        
-        incepch = new JFileChooser();
+
         imgch = new JFileChooser();
         imgch.setFileFilter(imgfilter);
         imgch.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        incepch.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         
         result=new JTextField();
         modelpth=new JTextField();
@@ -87,8 +81,6 @@ public class Recognizer extends JFrame implements ActionListener {
         imgpth.setEditable(false);
         viewer = new JLabel();
         getContentPane().add(table);
-        table.addCell(modelpth).width(250);
-        table.addCell(incep);
         table.row();
         table.addCell(imgpth).width(250);
         table.addCell(img);
@@ -113,11 +105,9 @@ public class Recognizer extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if (e.getSource() == incep) {
-            int returnVal = incepch.showOpenDialog(this);
+        if (e.getSource() == img) {
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-//                File file = incepch.getSelectedFile();
+            if (fileInception != null) {
                 File file = fileInception;
                 modelpath = file.getAbsolutePath();
 
@@ -130,7 +120,6 @@ public class Recognizer extends JFrame implements ActionListener {
                 System.out.println("Process was cancelled by user.");
             }
 
-        } else if (e.getSource() == img) {
             int returnVal = imgch.showOpenDialog(Recognizer.this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 try {
